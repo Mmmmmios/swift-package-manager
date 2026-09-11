@@ -1151,11 +1151,14 @@ public final class SwiftBuildSystem: SPMBuildCore.BuildSystem {
         #endif
 
         let indexEnableDataStore: Bool
+        let indexDataStoreFolderPath: String?
         switch buildParameters.indexStoreMode {
         case .off:
             indexEnableDataStore = false
+            indexDataStoreFolderPath = nil
         case .on, .auto:
             indexEnableDataStore = true
+            indexDataStoreFolderPath = try await self.indexStore(for: buildParameters).pathStringWithPosixSlashes
         }
 
         let arenaInfo = SWBArenaInfo(
@@ -1166,7 +1169,7 @@ public final class SwiftBuildSystem: SPMBuildCore.BuildSystem {
             indexRegularBuildProductsPath: nil,
             indexRegularBuildIntermediatesPath: nil,
             indexPCHPath: ddPathPrefix,
-            indexDataStoreFolderPath: ddPathPrefix,
+            indexDataStoreFolderPath: indexDataStoreFolderPath,
             indexEnableDataStore: request.parameters.arenaInfo?.indexEnableDataStore ?? indexEnableDataStore
         )
 

@@ -412,6 +412,19 @@ struct SwiftBuildSystemTests {
                 #expect(synthesizedArgs.table["SWIFT_INDEX_STORE_PATH"] == nil)
                 #expect(synthesizedArgs.table["CLANG_INDEX_STORE_PATH"] == nil)
             }
+
+            let buildRequest = try await swiftBuild.makeBuildRequest(
+                service: service,
+                session: session,
+                configuredTargets: [],
+                derivedDataPath: buildParameters.dataPath,
+                symbolGraphOptions: nil,
+                setToolchainSetting: false,
+                shouldDisableSandbox: false,
+            )
+            let arenaInfo = try #require(buildRequest.parameters.arenaInfo)
+            #expect(arenaInfo.indexEnableDataStore == (indexStoreSettingUT != .off))
+            #expect(arenaInfo.indexDataStoreFolderPath == expectedPathValue?.pathString)
         }
     }
 
